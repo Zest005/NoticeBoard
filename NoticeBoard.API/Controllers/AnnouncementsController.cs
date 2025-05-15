@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NoticeBoard.API.DTOs;
 using NoticeBoard.API.Models;
 using NoticeBoard.API.Repositories;
 using System.Security.Claims;
@@ -39,39 +40,48 @@ public class AnnouncementsController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody] Announcement announcement)
+    public async Task<IActionResult> Create([FromBody] CreateAnnouncementDto dto)
     {
-        announcement.Id = Guid.NewGuid();
-        announcement.CreatedDate = DateTime.UtcNow;
-
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        announcement.UserId = userId;
+        var announcement = new Announcement
+        {
+            Id = Guid.NewGuid(),
+            Title = dto.Title,
+            Description = dto.Description,
+            Status = dto.Status,
+            Category = dto.Category,
+            SubCategory = dto.SubCategory,
+            CreatedDate = DateTime.UtcNow,
+            UserId = userId
+        };
 
         await _repo.InsertAsync(announcement);
-
-        if (announcement.UserId != userId)
-            return Forbid();
 
         return Ok();
     }
 
     [HttpPut("{id}")]
     [Authorize]
-    public async Task<IActionResult> Update(Guid id, [FromBody] Announcement updatedAnnouncement)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateAnnouncementDto dto)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        updatedAnnouncement.Id = id;
-        updatedAnnouncement.UserId = userId;
-        updatedAnnouncement.CreatedDate = DateTime.UtcNow;
+        var announcement = new Announcement
+        {
+            Id = id,
+            Title = dto.Title,
+            Description = dto.Description,
+            Status = dto.Status,
+            Category = dto.Category,
+            SubCategory = dto.SubCategory,
+            CreatedDate = DateTime.UtcNow,
+            UserId = userId
+        };
 
-        var result = await _repo.UpdateAsync(updatedAnnouncement);
+        var result = await _repo.UpdateAsync(announcement);
 
         if (!result)
-            return Forbid();
-
-        if (updatedAnnouncement.UserId != userId)
             return Forbid();
 
         return Ok();
