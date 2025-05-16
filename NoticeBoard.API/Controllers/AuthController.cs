@@ -21,16 +21,17 @@ namespace NoticeBoard.API.Controllers
         }
 
         [HttpGet("login")]
-        public IActionResult Login()
+        public IActionResult Login([FromQuery] string? returnUrl = null)
         {
-            var redirectUrl = Url.Action(nameof(GoogleCallback), "Auth");
+            returnUrl ??= "/auth/me";
+            var redirectUrl = Url.Action(nameof(GoogleCallback), "Auth", new { returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme, redirectUrl);
 
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
         [HttpGet("signin-google")]
-        public async Task<IActionResult> GoogleCallback()
+        public async Task<IActionResult> GoogleCallback([FromQuery] string? returnUrl = null)
         {
             var info = await _signInManager.GetExternalLoginInfoAsync();
 
@@ -64,7 +65,10 @@ namespace NoticeBoard.API.Controllers
                 user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             }
 
-            return Redirect("/auth/me");
+            if (string.IsNullOrEmpty(returnUrl))
+                returnUrl = "/auth/me";
+
+            return Redirect(returnUrl);
         }
 
         [HttpGet("me")]

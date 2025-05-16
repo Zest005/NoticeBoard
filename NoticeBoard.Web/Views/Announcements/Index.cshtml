@@ -1,0 +1,62 @@
+﻿@model List<NoticeBoard.Web.Models.AnnouncementViewModel>
+
+@{
+    ViewData["Title"] = "All Announcements";
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    var userName = User.Identity?.Name ?? "";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - NoticeBoard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+        <a class="navbar-brand" href="/">NoticeBoard</a>
+        <div class="ms-auto">
+            @if (!isAuthenticated)
+            {
+                <a class="btn btn-outline-light" href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements">Login</a>
+
+            }
+            else
+            {
+                <span class="text-white me-2">Hello, @userName</span>
+                <a class="btn btn-outline-light" href="https://localhost:7247/auth/logout">Logout</a>
+            }
+        </div>
+    </header>
+
+    <main class="container mt-4">
+        <h1 class="mb-4">All Announcements</h1>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>SubCategory</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a href="/announcements/details/@item.Id">@item.Title</a>
+                            </td>
+                            <td>@item.Category</td>
+                            <td>@item.SubCategory</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>
