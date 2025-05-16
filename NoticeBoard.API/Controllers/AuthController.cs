@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using NoticeBoard.API.DTOs;
 
 namespace NoticeBoard.API.Controllers
 {
@@ -75,7 +76,7 @@ namespace NoticeBoard.API.Controllers
             if (user == null)
                 return Unauthorized();
 
-            return Ok(new
+            return Ok(new AuthUserDto
             {
                 Id = user.Id,
                 Email = user.Email,

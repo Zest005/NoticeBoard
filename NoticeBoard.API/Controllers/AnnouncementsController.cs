@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NoticeBoard.API.DTOs;
+using NoticeBoard.API.Interfaces;
 using NoticeBoard.API.Models;
-using NoticeBoard.API.Repositories;
 using System.Security.Claims;
 
 namespace NoticeBoard.API.Controllers;
@@ -11,17 +12,37 @@ namespace NoticeBoard.API.Controllers;
 [Route("[controller]")]
 public class AnnouncementsController : ControllerBase
 {
-    private readonly AnnouncementRepository _repo;
+    private readonly IAnnouncementRepository _repo;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public AnnouncementsController(AnnouncementRepository repo)
+    public AnnouncementsController(IAnnouncementRepository repo, UserManager<IdentityUser> userManager)
     {
         _repo = repo;
+        _userManager = userManager;
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Announcement>>> GetAll()
+    public async Task<ActionResult<List<AnnouncementDto>>> GetAll()
     {
-        var result = await _repo.GetAllAsync();
+        var announcements = await _repo.GetAllAsync();
+        var result = new List<AnnouncementDto>();
+
+        foreach (var announcement in announcements)
+        {
+            var user = await _userManager.FindByIdAsync(announcement.UserId);
+            result.Add(new AnnouncementDto
+            {
+                Id = announcement.Id,
+                Title = announcement.Title,
+                Description = announcement.Description,
+                CreatedDate = announcement.CreatedDate,
+                Status = announcement.Status,
+                Category = announcement.Category,
+                SubCategory = announcement.SubCategory,
+                AuthorEmail = user?.Email ?? string.Empty,
+                AuthorName = user?.UserName ?? string.Empty
+            });
+        }
 
         return Ok(result);
     }
@@ -34,7 +55,22 @@ public class AnnouncementsController : ControllerBase
         if (announcement == null)
             return NotFound();
 
-        return Ok(announcement);
+        var user = await _userManager.FindByIdAsync(announcement.UserId);
+
+        var result = new AnnouncementDto
+        {
+            Id = announcement.Id,
+            Title = announcement.Title,
+            Description = announcement.Description,
+            CreatedDate = announcement.CreatedDate,
+            Status = announcement.Status,
+            Category = announcement.Category,
+            SubCategory = announcement.SubCategory,
+            AuthorEmail = user?.Email ?? string.Empty,
+            AuthorName = user?.UserName ?? string.Empty
+        };
+
+        return Ok(result);
     }
 
 
@@ -42,6 +78,9 @@ public class AnnouncementsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Create([FromBody] CreateAnnouncementDto dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         var announcement = new Announcement
@@ -65,7 +104,14 @@ public class AnnouncementsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateAnnouncementDto dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        var existAnn = await _repo.GetByIdAsync(id);
+        if (existAnn == null)
+            return NotFound();
 
         var announcement = new Announcement
         {
@@ -75,7 +121,7 @@ public class AnnouncementsController : ControllerBase
             Status = dto.Status,
             Category = dto.Category,
             SubCategory = dto.SubCategory,
-            CreatedDate = DateTime.UtcNow,
+            CreatedDate = existAnn.CreatedDate,
             UserId = userId
         };
 
