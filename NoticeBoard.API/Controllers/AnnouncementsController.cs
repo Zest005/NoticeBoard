@@ -109,6 +109,10 @@ public class AnnouncementsController : ControllerBase
 
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+        var existAnn = await _repo.GetByIdAsync(id);
+        if (existAnn == null)
+            return NotFound();
+
         var announcement = new Announcement
         {
             Id = id,
@@ -117,7 +121,7 @@ public class AnnouncementsController : ControllerBase
             Status = dto.Status,
             Category = dto.Category,
             SubCategory = dto.SubCategory,
-            CreatedDate = DateTime.UtcNow,
+            CreatedDate = existAnn.CreatedDate,
             UserId = userId
         };
 

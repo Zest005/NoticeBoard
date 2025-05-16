@@ -43,7 +43,6 @@ namespace NoticeBoard.API
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
 
-            builder.Services.AddScoped<AnnouncementRepository>();
             builder.Services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
 
             var app = builder.Build();
