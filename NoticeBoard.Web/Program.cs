@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace NoticeBoard.Web
 {
     public class Program
@@ -13,6 +15,13 @@ namespace NoticeBoard.Web
                 client.BaseAddress = new Uri("https://localhost:7247/");
             });
 
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/auth/login";
+                    options.LogoutPath = "/auth/logout";
+                });
+
             var app = builder.Build();
 
             if (!app.Environment.IsDevelopment())
@@ -24,12 +33,13 @@ namespace NoticeBoard.Web
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
+                pattern: "{controller=Announcements}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
             app.Run();
