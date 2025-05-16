@@ -42,6 +42,9 @@ public class AnnouncementsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Create([FromBody] CreateAnnouncementDto dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         var announcement = new Announcement
@@ -65,6 +68,9 @@ public class AnnouncementsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateAnnouncementDto dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         var announcement = new Announcement
