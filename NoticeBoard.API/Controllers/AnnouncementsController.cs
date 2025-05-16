@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NoticeBoard.API.DTOs;
+using NoticeBoard.API.Interfaces;
 using NoticeBoard.API.Models;
-using NoticeBoard.API.Repositories;
 using System.Security.Claims;
 
 namespace NoticeBoard.API.Controllers;
@@ -11,9 +11,9 @@ namespace NoticeBoard.API.Controllers;
 [Route("[controller]")]
 public class AnnouncementsController : ControllerBase
 {
-    private readonly AnnouncementRepository _repo;
+    private readonly IAnnouncementRepository _repo;
 
-    public AnnouncementsController(AnnouncementRepository repo)
+    public AnnouncementsController(IAnnouncementRepository repo)
     {
         _repo = repo;
     }

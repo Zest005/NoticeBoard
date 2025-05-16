@@ -1,10 +1,11 @@
 ﻿using Microsoft.Data.SqlClient;
+using NoticeBoard.API.Interfaces;
 using NoticeBoard.API.Models;
 using System.Data;
 
 namespace NoticeBoard.API.Repositories
 {
-    public class AnnouncementRepository
+    public class AnnouncementRepository : IAnnouncementRepository
     {
         private readonly string _connectionString;
 
