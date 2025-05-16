@@ -20,13 +20,13 @@
         <div class="ms-auto">
             @if (!isAuthenticated)
             {
-                <a class="btn btn-outline-light" href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements">Login</a>
+                <a class="btn btn-outline-light" href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements/authcallback">Login</a>
 
             }
             else
             {
                 <span class="text-white me-2">Hello, @userName</span>
-                <a class="btn btn-outline-light" href="https://localhost:7247/auth/logout">Logout</a>
+                <a class="btn btn-outline-light" href="/announcements/logout">Logout</a>
             }
         </div>
     </header>
