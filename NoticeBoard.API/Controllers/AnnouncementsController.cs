@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NoticeBoard.API.DTOs;
 using NoticeBoard.API.Interfaces;
@@ -12,16 +13,36 @@ namespace NoticeBoard.API.Controllers;
 public class AnnouncementsController : ControllerBase
 {
     private readonly IAnnouncementRepository _repo;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public AnnouncementsController(IAnnouncementRepository repo)
+    public AnnouncementsController(IAnnouncementRepository repo, UserManager<IdentityUser> userManager)
     {
         _repo = repo;
+        _userManager = userManager;
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Announcement>>> GetAll()
+    public async Task<ActionResult<List<AnnouncementDto>>> GetAll()
     {
-        var result = await _repo.GetAllAsync();
+        var announcements = await _repo.GetAllAsync();
+        var result = new List<AnnouncementDto>();
+
+        foreach (var announcement in announcements)
+        {
+            var user = await _userManager.FindByIdAsync(announcement.UserId);
+            result.Add(new AnnouncementDto
+            {
+                Id = announcement.Id,
+                Title = announcement.Title,
+                Description = announcement.Description,
+                CreatedDate = announcement.CreatedDate,
+                Status = announcement.Status,
+                Category = announcement.Category,
+                SubCategory = announcement.SubCategory,
+                AuthorEmail = user?.Email ?? string.Empty,
+                AuthorName = user?.UserName ?? string.Empty
+            });
+        }
 
         return Ok(result);
     }
@@ -34,7 +55,22 @@ public class AnnouncementsController : ControllerBase
         if (announcement == null)
             return NotFound();
 
-        return Ok(announcement);
+        var user = await _userManager.FindByIdAsync(announcement.UserId);
+
+        var result = new AnnouncementDto
+        {
+            Id = announcement.Id,
+            Title = announcement.Title,
+            Description = announcement.Description,
+            CreatedDate = announcement.CreatedDate,
+            Status = announcement.Status,
+            Category = announcement.Category,
+            SubCategory = announcement.SubCategory,
+            AuthorEmail = user?.Email ?? string.Empty,
+            AuthorName = user?.UserName ?? string.Empty
+        };
+
+        return Ok(result);
     }
 
 
