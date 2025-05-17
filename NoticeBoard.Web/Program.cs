@@ -12,7 +12,8 @@ namespace NoticeBoard.Web
 
             builder.Services.AddHttpClient("ApiClient", client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7247/");
+                var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
+                client.BaseAddress = new Uri(apiBaseUrl!);
             });
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

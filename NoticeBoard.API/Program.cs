@@ -74,6 +74,8 @@ namespace NoticeBoard.API
             if (app.Environment.IsDevelopment())
                 app.MapOpenApi();
 
+            app.UseForwardedHeaders();
+
             app.UseHttpsRedirection();
             app.UseRouting();
 
