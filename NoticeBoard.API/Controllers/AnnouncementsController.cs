@@ -90,7 +90,7 @@ public class AnnouncementsController : ControllerBase
             Status = dto.Status,
             Category = dto.Category,
             SubCategory = dto.SubCategory,
-            CreatedDate = DateTime.UtcNow,
+            CreatedDate = DateTime.UtcNow.AddHours(3),
             UserId = userId
         };
 
