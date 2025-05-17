@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using NoticeBoard.API.DTOs;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace NoticeBoard.API.Controllers
 {
@@ -13,24 +16,27 @@ namespace NoticeBoard.API.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _configuration = configuration;
         }
 
         [HttpGet("login")]
-        public IActionResult Login()
+        public IActionResult Login([FromQuery] string? returnUrl = null)
         {
-            var redirectUrl = Url.Action(nameof(GoogleCallback), "Auth");
+            returnUrl ??= "/auth/me";
+            var redirectUrl = Url.Action(nameof(GoogleCallback), "Auth", new { returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme, redirectUrl);
 
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
         [HttpGet("signin-google")]
-        public async Task<IActionResult> GoogleCallback()
+        public async Task<IActionResult> GoogleCallback([FromQuery] string? returnUrl = null)
         {
             var info = await _signInManager.GetExternalLoginInfoAsync();
 
@@ -64,7 +70,16 @@ namespace NoticeBoard.API.Controllers
                 user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             }
 
-            return Redirect("/auth/me");
+            if (string.IsNullOrEmpty(returnUrl))
+                returnUrl = "/auth/me";
+
+            var token = GenerateJwtToken(user);
+            var uriBuilder = new UriBuilder(returnUrl ?? "/")
+            {
+                Query = $"token={token}"
+            };
+
+            return Redirect(uriBuilder.ToString());
         }
 
         [HttpGet("me")]
@@ -97,6 +112,30 @@ namespace NoticeBoard.API.Controllers
         public IActionResult Forbidden()
         {
             return Forbid();
+        }
+
+        private string GenerateJwtToken(IdentityUser user)
+        {
+            var jwtKey = _configuration["Jwt:Key"];
+            var jwtIssuer = _configuration["Jwt:Issuer"];
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName ?? "")
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: jwtIssuer,
+                audience: null,
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(1),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
