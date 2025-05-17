@@ -26,10 +26,10 @@ namespace NoticeBoard.Web.Controllers
 
         private static readonly Dictionary<string, List<string>> CategoryMap = new()
         {
-            ["Household appliances"] = new() { "Refrigerators", "Washing machines", "Water heaters", "Ovens", "Hoods", "Microwave ovens" },
-            ["Computer equipment"] = new() { "PCs", "Laptops", "Monitors", "Printers", "Scanners" },
-            ["Smartphones"] = new() { "Android smartphones", "iOS/Apple smartphones" },
-            ["Other"] = new() { "Clothes", "Shoes", "Accessories", "Sports equipment", "Toys" }
+            ["Побутова техніка"] = new() { "Холодильники", "Пральні машини", "Бойлери", "Печі", "Витяжки", "Мікрохвильові печі" },
+            ["Комп'ютерна техніка"] = new() { "ПК", "Ноутбуки", "Монітори", "Принтери", "Сканери" },
+            ["Смартфони"] = new() { "Android смартфони", "iOS/Apple смартфони" },
+            ["Інше"] = new() { "Одяг", "Взуття", "Аксесуари", "Спортивне обладнання", "Іграшки" }
         };
 
         private void PopulateDropdowns(CreateAnnouncementViewModel model)

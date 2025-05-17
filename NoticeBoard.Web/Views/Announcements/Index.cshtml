@@ -1,7 +1,7 @@
 ﻿@model List<NoticeBoard.Web.Models.AnnouncementViewModel>
 
 @{
-    ViewData["Title"] = "All Announcements";
+    ViewData["Title"] = "NoticeBoard";
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
     var userName = User.Identity?.Name ?? "";
     var categories = ViewBag.Categories as List<string> ?? new List<string>();
@@ -24,23 +24,23 @@
         <div class="ms-auto">
             @if (!isAuthenticated)
             {
-                <a class="btn btn-outline-light" href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements/authcallback">Login</a>
+                <a class="btn btn-outline-light" href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements/authcallback">Увійти</a>
             }
             else
             {
-                <span class="text-white me-2">Hello, @userName</span>
-                <a class="btn btn-outline-light" href="/announcements/logout">Logout</a>
+                <span class="text-white me-2">Вітаю, @userName</span>
+                <a class="btn btn-outline-light" href="/announcements/logout">Вийти</a>
             }
         </div>
     </header>
 
     <main class="container mt-4">
-        <h1 class="mb-4">All Announcements</h1>
+        <h1 class="mb-4">Усі оголошення</h1>
 
         <form method="get" class="row g-2 mb-3 align-items-end">
             <div class="col-md-4">
                 <select class="form-select" name="category">
-                    <option value="">All Categories</option>
+                    <option value="">Усі категорії</option>
                     @foreach (var cat in categories)
                     {
                         <option value="@cat" selected="@(cat == selectedCategory ? "selected" : null)">@cat</option>
@@ -49,22 +49,22 @@
             </div>
             <div class="col-md-4 d-flex">
                 <select class="form-select me-2" name="subcategory">
-                    <option value="">All Subcategories</option>
+                    <option value="">Усі підкатегорії</option>
                     @foreach (var sub in subCategories)
                     {
                         <option value="@sub" selected="@(sub == selectedSubCategory ? "selected" : null)">@sub</option>
                     }
                 </select>
-                <button type="submit" class="btn btn-secondary">Filter</button>
+                <button type="submit" class="btn btn-secondary">Фільтрувати</button>
             </div>
             <div class="col-md-4 d-flex justify-content-end align-items-center">
                 @if (isAuthenticated)
                 {
-                    <a class="btn btn-primary ms-2" href="/announcements/create">Create announcement</a>
+                    <a class="btn btn-primary ms-2" href="/announcements/create">Створити оголошення</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-primary ms-2" id="createAnnouncementBtn">Create announcement</button>
+                    <button type="button" class="btn btn-primary ms-2" id="createAnnouncementBtn">Створити оголошення</button>
                 }
             </div>
         </form>
@@ -73,9 +73,9 @@
             <table class="table table-striped table-bordered">
                 <thead class="table-dark">
                     <tr>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>SubCategory</th>
+                        <th>Назва</th>
+                        <th>Категорія</th>
+                        <th>Підкатегорія</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -98,15 +98,15 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="loginWarningModalLabel">Authorization Required</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="loginWarningModalLabel">Необхідна авторизація</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
                 </div>
                 <div class="modal-body">
-                    Log in first to create an announcement.
+                    Авторизуйтесь для створення оголошення.
                 </div>
                 <div class="modal-footer">
-                    <a href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements/authcallback" class="btn btn-primary">Login</a>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements/authcallback" class="btn btn-primary">Увійти</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 ﻿@model NoticeBoard.Web.Models.CreateAnnouncementViewModel
 
 @{
-    ViewData["Title"] = "Edit Announcement";
+    ViewData["Title"] = "Редагування оголошення";
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
     var userName = User.Identity?.Name ?? "";
     var announcementId = ViewBag.AnnouncementId;
@@ -21,59 +21,59 @@
         <div class="ms-auto">
             @if (!isAuthenticated)
             {
-                <a class="btn btn-outline-light" href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements/authcallback">Login</a>
+                <a class="btn btn-outline-light" href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements/authcallback">Увійти</a>
             }
             else
             {
-                <span class="text-white me-2">Hello, @userName</span>
-                <a class="btn btn-outline-light" href="/announcements/logout">Logout</a>
+                <span class="text-white me-2">Вітаю, @userName</span>
+                <a class="btn btn-outline-light" href="/announcements/logout">Вийти</a>
             }
         </div>
     </header>
 
     <main class="container mt-4">
-        <h1 class="mb-4">Edit Announcement</h1>
+        <h1 class="mb-4">Редагування оголошення</h1>
         <div class="card">
             <div class="card-body">
                 <form asp-action="Edit" asp-route-id="@announcementId" method="post" autocomplete="off">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="action" id="formAction" value="edit" />
                     <div class="mb-3">
-                        <label asp-for="Title" class="form-label">Title</label>
+                        <label asp-for="Title" class="form-label">Назва</label>
                         <input asp-for="Title" class="form-control" maxlength="150" required />
                         <span asp-validation-for="Title" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="Description" class="form-label">Description</label>
+                        <label asp-for="Description" class="form-label">Опис</label>
                         <textarea asp-for="Description" class="form-control" rows="4" maxlength="1000" required></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="Category" class="form-label">Category</label>
+                        <label asp-for="Category" class="form-label">Категорія</label>
                         <select asp-for="Category" class="form-select" asp-items="Model.Categories" name="Category"
                                 onchange="document.getElementById('formAction').value='categoryChange'; this.form.submit();">
-                            <option value="">-- Select Category --</option>
+                            <option value="">-- Оберіть категорію --</option>
                         </select>
                         <span asp-validation-for="Category" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="SubCategory" class="form-label">SubCategory</label>
+                        <label asp-for="SubCategory" class="form-label">Підкатегорія</label>
                         <select asp-for="SubCategory" class="form-select" asp-items="Model.SubCategories"
                                 disabled="@(string.IsNullOrEmpty(Model.Category) ? "disabled" : null)">
-                            <option value="">-- Select SubCategory --</option>
+                            <option value="">-- Оберіть підкатегорію --</option>
                         </select>
                         <span asp-validation-for="SubCategory" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="Status" class="form-label">Status</label>
+                        <label asp-for="Status" class="form-label">Статус</label>
                         <select asp-for="Status" class="form-select" required>
-                            <option value="true" selected="@Model.Status">Active</option>
-                            <option value="false" selected="!@Model.Status">Inactive</option>
+                            <option value="true" selected="@Model.Status">Активний</option>
+                            <option value="false" selected="!@Model.Status">Неактивний</option>
                         </select>
                         <span asp-validation-for="Status" class="text-danger"></span>
                     </div>
-                    <button type="submit" class="btn btn-primary" onclick="document.getElementById('formAction').value='edit'">Save</button>
-                    <a class="btn btn-secondary" href="/announcements/details/@announcementId">Cancel</a>
+                    <button type="submit" class="btn btn-primary" onclick="document.getElementById('formAction').value='edit'">Зберегти</button>
+                    <a class="btn btn-secondary" href="/announcements/details/@announcementId">Назад</a>
                 </form>
             </div>
         </div>
