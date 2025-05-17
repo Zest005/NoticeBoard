@@ -1,5 +1,85 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model NoticeBoard.Web.Models.CreateAnnouncementViewModel
+
 @{
+    ViewData["Title"] = "Create Announcement";
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    var userName = User.Identity?.Name ?? "";
 }
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - NoticeBoard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+        <a class="navbar-brand" href="/">NoticeBoard</a>
+        <div class="ms-auto">
+            @if (!isAuthenticated)
+            {
+                <a class="btn btn-outline-light" href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements/authcallback">Login</a>
+            }
+            else
+            {
+                <span class="text-white me-2">Hello, @userName</span>
+                <a class="btn btn-outline-light" href="/announcements/logout">Logout</a>
+            }
+        </div>
+    </header>
+
+    <main class="container mt-4">
+        <h1 class="mb-4">Create Announcement</h1>
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Create" method="post" autocomplete="off">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="action" id="formAction" value="create" />
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">Title</label>
+                        <input asp-for="Title" class="form-control" maxlength="150" required />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="4" maxlength="1000" required></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Category" class="form-label">Category</label>
+                        <select asp-for="Category" class="form-select" asp-items="Model.Categories" name="Category"
+                                onchange="document.getElementById('formAction').value='categoryChange'; this.form.submit();">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="SubCategory" class="form-label">SubCategory</label>
+                        <select asp-for="SubCategory" class="form-select" asp-items="Model.SubCategories"
+                                disabled="@(string.IsNullOrEmpty(Model.Category) ? "disabled" : null)">
+                            <option value="">-- Select SubCategory --</option>
+                        </select>
+                        <span asp-validation-for="SubCategory" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Status" class="form-label">Status</label>
+                        <select asp-for="Status" class="form-select" required>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary" onclick="document.getElementById('formAction').value='create'">Create</button>
+                    <a class="btn btn-secondary" href="/announcements">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>
