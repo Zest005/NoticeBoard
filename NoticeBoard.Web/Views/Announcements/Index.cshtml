@@ -9,6 +9,10 @@
     var selectedCategory = Context.Request.Query["category"].ToString();
     var selectedSubCategory = Context.Request.Query["subcategory"].ToString();
 }
+@{
+    var returnUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/announcements/authcallback";
+    var loginUrl = $"{ViewBag.ApiBaseUrl}auth/login?returnUrl={returnUrl}";
+}
 
 <!DOCTYPE html>
 <html>
@@ -24,7 +28,7 @@
         <div class="ms-auto">
             @if (!isAuthenticated)
             {
-                <a class="btn btn-outline-light" href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements/authcallback">Увійти</a>
+                <a class="btn btn-outline-light" href="@loginUrl">Увійти</a>
             }
             else
             {
@@ -105,7 +109,7 @@
                     Авторизуйтесь для створення оголошення.
                 </div>
                 <div class="modal-footer">
-                    <a href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements/authcallback" class="btn btn-primary">Увійти</a>
+                    <a href="@loginUrl" class="btn btn-primary">Увійти</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
                 </div>
             </div>
