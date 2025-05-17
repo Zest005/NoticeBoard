@@ -73,7 +73,6 @@ public class AnnouncementsController : ControllerBase
         return Ok(result);
     }
 
-
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> Create([FromBody] CreateAnnouncementDto dto)
@@ -97,7 +96,7 @@ public class AnnouncementsController : ControllerBase
 
         await _repo.InsertAsync(announcement);
 
-        return Ok();
+        return Ok(new { id = announcement.Id });
     }
 
     [HttpPut("{id}")]
