@@ -32,6 +32,8 @@ namespace NoticeBoard.API.Controllers
             var redirectUrl = Url.Action(nameof(GoogleCallback), "Auth", new { returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme, redirectUrl);
 
+            properties.Items["prompt"] = "select_account";
+
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
