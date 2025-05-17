@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace NoticeBoard.Web.Models
 {
-    public class AnnouncementViewModel
+    public class CreateAnnouncementViewModel
     {
-        public Guid Id { get; set; }
-
         [Required]
         [MaxLength(150)]
         public string Title { get; set; }
@@ -13,9 +13,6 @@ namespace NoticeBoard.Web.Models
         [Required]
         [MaxLength(1000)]
         public string Description { get; set; }
-
-        [Required]
-        public DateTime CreatedDate { get; set; }
 
         [Required]
         public bool Status { get; set; }
@@ -28,10 +25,11 @@ namespace NoticeBoard.Web.Models
         [MaxLength(50)]
         public string SubCategory { get; set; }
 
-        [Required]
-        public string AuthorEmail { get; set; }
 
-        [Required]
-        public string AuthorName { get; set; }
+        [BindNever]
+        public List<SelectListItem>? Categories { get; set; }
+
+        [BindNever]
+        public List<SelectListItem>? SubCategories { get; set; }
     }
 }
