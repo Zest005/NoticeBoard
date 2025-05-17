@@ -93,7 +93,10 @@ namespace NoticeBoard.Web.Controllers
 
         public async Task<IActionResult> Index(string? category, string? subcategory)
         {
+            ViewBag.ApiBaseUrl = _configuration["ApiBaseUrl"];
+
             var response = await _httpClient.GetAsync("announcements");
+            Console.WriteLine(">>> URL: " + _httpClient.BaseAddress + "announcements");
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
@@ -117,6 +120,8 @@ namespace NoticeBoard.Web.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
+            ViewBag.ApiBaseUrl = _configuration["ApiBaseUrl"];
+
             var response = await _httpClient.GetAsync($"announcements/{id}");
 
             if (!response.IsSuccessStatusCode)

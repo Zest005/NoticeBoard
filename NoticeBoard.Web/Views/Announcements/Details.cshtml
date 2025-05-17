@@ -6,6 +6,10 @@
     var userName = User.Identity?.Name ?? "";
     var isAuthor = isAuthenticated && userName == Model.AuthorName;
 }
+@{
+    var returnUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/announcements/authcallback";
+    var loginUrl = $"{ViewBag.ApiBaseUrl}auth/login?returnUrl={returnUrl}";
+}
 
 <!DOCTYPE html>
 <html>
@@ -21,7 +25,7 @@
         <div class="ms-auto">
             @if (!isAuthenticated)
             {
-                <a class="btn btn-outline-light" href="https://localhost:7247/auth/login?returnUrl=https://localhost:7010/announcements/authcallback">Увійти</a>
+                <a class="btn btn-outline-light" href="@loginUrl">Увійти</a>
             }
             else
             {
@@ -44,7 +48,7 @@
                 <p class="card-text">@Model.Description</p>
                 <hr />
                 <dl class="row">
-                    <dt class="col-sm-3">Status</dt>
+                    <dt class="col-sm-3">Статус</dt>
                     <dd class="col-sm-9">
                         @if (Model.Status)
                         {
